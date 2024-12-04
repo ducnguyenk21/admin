@@ -131,9 +131,9 @@ const WorkoutsTable: React.FC<{ refresh: boolean }> = ({ refresh }) => {
   };
 
   const handleDeleteSelected = async () => {
-    setLoading(true); // Hiển thị chỉ báo tải
-    const storage = getStorage(); // Khởi tạo storage
-    const errors: string[] = []; // Mảng lưu trữ lỗi
+    setLoading(true);
+    const storage = getStorage();
+    const errors: string[] = [];
     try {
       await Promise.all(
         selected.map(async (id) => {
@@ -142,7 +142,7 @@ const WorkoutsTable: React.FC<{ refresh: boolean }> = ({ refresh }) => {
 
           if (docSnap.exists()) {
             const data = docSnap.data();
-            const picURL = data.pic; // Lấy URL hình ảnh từ tài liệu
+            const picURL = data.pic;
 
             // Xóa tài liệu khỏi Firestore
             await deleteDoc(workoutDoc);
@@ -175,7 +175,6 @@ const WorkoutsTable: React.FC<{ refresh: boolean }> = ({ refresh }) => {
         })
       );
 
-      // Hiển thị thông báo thành công hoặc lỗi
       if (errors.length > 0) {
         showAlert(`Some errors occurred: ${errors.join(", ")}`, "warning");
       } else {
@@ -183,12 +182,22 @@ const WorkoutsTable: React.FC<{ refresh: boolean }> = ({ refresh }) => {
       }
 
       setSelected([]);
-      fetchRows(); // Làm mới danh sách bài tập
+      fetchRows();
     } catch (error) {
       console.error("Error deleting workouts:", error);
       showAlert("Error deleting workouts.", "error");
     } finally {
-      setLoading(false); // Ẩn chỉ báo tải
+      setLoading(false);
+    }
+  };
+
+  const handleOpenAdd = (id: string) => {
+    const workout = rows.find((row) => row.id === id);
+    if (workout) {
+      setWorkoutToEdit(workout);
+      setOpenAdd(true);
+    } else {
+      console.error(`Workout with ID: ${id} not found.`);
     }
   };
 
@@ -196,7 +205,7 @@ const WorkoutsTable: React.FC<{ refresh: boolean }> = ({ refresh }) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset to first page on rows per page change
+    setPage(0);
   };
 
   return (
@@ -262,15 +271,20 @@ const WorkoutsTable: React.FC<{ refresh: boolean }> = ({ refresh }) => {
               .map((row) => (
                 <TableRow key={row.id}>
                   <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selected.includes(row.id)}
-                      onChange={(event) => {
-                        const newSelected = selected.includes(row.id)
-                          ? selected.filter((id) => id !== row.id)
-                          : [...selected, row.id];
-                        setSelected(newSelected);
-                      }}
-                    />
+                    <Box sx={{ display: "flex" }}>
+                      <Checkbox
+                        checked={selected.includes(row.id)}
+                        onChange={(event) => {
+                          const newSelected = selected.includes(row.id)
+                            ? selected.filter((id) => id !== row.id)
+                            : [...selected, row.id];
+                          setSelected(newSelected);
+                        }}
+                      />
+                      <IconButton onClick={() => handleOpenAdd(row.id)}>
+                        <EditIcon />
+                      </IconButton>
+                    </Box>
                   </TableCell>
                   <TableCell>
                     <Avatar
