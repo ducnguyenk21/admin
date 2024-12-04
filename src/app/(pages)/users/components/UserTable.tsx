@@ -224,8 +224,8 @@ const UserTable: React.FC<UserTableProps> = ({ refresh }) => {
         <Table sx={{ width: "100%" }} aria-label="user table">
           <TableHead sx={{ background: "#f4f6f8" }}>
             <TableRow>
-              <TableCell padding="checkbox" />
-              <TableCell />
+              <TableCell padding="checkbox" sx={{ width: "5%" }} />
+              <TableCell sx={{ width: "5%" }} />
               <TableCell
                 sx={{
                   fontWeight: "bold",
@@ -371,9 +371,6 @@ const UserTable: React.FC<UserTableProps> = ({ refresh }) => {
                         />
                         <IconButton onClick={() => handleOpenAdd(row.uid)}>
                           <EditIcon />
-                        </IconButton>
-                        <IconButton>
-                          <KeyIcon />
                         </IconButton>
                       </Box>
                     </TableCell>

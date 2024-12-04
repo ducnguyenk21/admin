@@ -127,7 +127,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose }) => {
           Vui lòng chọn phương thức
         </DialogTitle>
         <DialogContent sx={{ textAlign: "center", mb: "-20px" }}>
-          <Button
+          {/* <Button
             fullWidth
             variant="contained"
             style={{
@@ -138,7 +138,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onClose }) => {
             }}
           >
             Gửi mã xác thực qua SMS
-          </Button>
+          </Button> */}
           <Button
             fullWidth
             variant="outlined"

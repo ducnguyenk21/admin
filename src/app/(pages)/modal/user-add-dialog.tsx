@@ -185,10 +185,73 @@ const AddNewPopup: React.FC<AddPopupProps> = ({
   };
 
   const validateInputs = () => {
-    if (!email || (type === "add" && !password) || !fname || !lname) {
+    const heightValue = parseFloat(height);
+    const weightValue = parseFloat(weight);
+    const dobDate = new Date(date_of_birth || "");
+    const today = new Date();
+    const age = today.getFullYear() - dobDate.getFullYear();
+    const monthDifference = today.getMonth() - dobDate.getMonth();
+    const isOlderThanTen = age > 10 || (age === 10 && monthDifference >= 0);
+
+    if (
+      !email ||
+      (type === "add" && !password) ||
+      !fname ||
+      !lname ||
+      !gender ||
+      !level
+    ) {
       showAlert("Cần phải nhập tất cả thông tin bắt buộc!", "error");
       return false;
     }
+
+    if (isNaN(heightValue) || heightValue <= 0) {
+      showAlert("Chiều cao phải là số dương!", "error");
+      return false;
+    }
+
+    if (isNaN(weightValue) || weightValue <= 0) {
+      showAlert("Cân nặng phải là số dương!", "error");
+      return false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      showAlert("Định dạng email không hợp lệ!", "error");
+      return false;
+    }
+
+    // Kiểm tra mật khẩu
+    if (type === "add" && password.length < 8) {
+      showAlert("Mật khẩu phải có ít nhất 8 ký tự.", "error");
+      return false;
+    }
+    if (type === "add" && /\s/.test(password)) {
+      showAlert("Mật khẩu không được chứa khoảng trắng.", "error");
+      return false;
+    }
+    if (type === "add" && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      showAlert("Mật khẩu phải có ít nhất 1 ký tự đặc biệt.", "error");
+      return false;
+    }
+    if (type === "add" && !/[A-Z]/.test(password)) {
+      showAlert("Mật khẩu phải có ít nhất 1 ký tự in hoa.", "error");
+      return false;
+    }
+    if (type === "add" && !/[a-z]/.test(password)) {
+      showAlert("Mật khẩu phải có ít nhất 1 ký tự thường.", "error");
+      return false;
+    }
+    if (type === "add" && !/[0-9]/.test(password)) {
+      showAlert("Mật khẩu phải có ít nhất 1 ký tự số.", "error");
+      return false;
+    }
+
+    if (!isOlderThanTen) {
+      showAlert("Ngày sinh phải lớn hơn 10 tuổi!", "error");
+      return false;
+    }
+
     return true;
   };
 
@@ -530,6 +593,7 @@ const AddNewPopup: React.FC<AddPopupProps> = ({
                 label="Ngày sinh"
                 type="date"
                 fullWidth
+                required
                 variant="outlined"
                 size="small"
                 value={date_of_birth}
@@ -557,6 +621,7 @@ const AddNewPopup: React.FC<AddPopupProps> = ({
               <TextField
                 margin="dense"
                 label="Cân nặng"
+                required
                 fullWidth
                 variant="outlined"
                 size="small"
@@ -583,9 +648,9 @@ const AddNewPopup: React.FC<AddPopupProps> = ({
                 onChange={(e) => setLevel(e.target.value)}
                 InputLabelProps={{ shrink: true }}
               >
-                <MenuItem value="Lose a Fat">Lose a Fat</MenuItem>
-                <MenuItem value="Lean & Tone">Lean & Tone</MenuItem>
-                <MenuItem value="Improve Shape">Improve Shape</MenuItem>
+                <MenuItem value="Weight Loss">Weight Loss</MenuItem>
+                <MenuItem value="Increase Fitness">Increase Fitness</MenuItem>
+                <MenuItem value="Improve Shape">Fat Loss & Toning</MenuItem>
               </TextField>
               <TextField
                 select
